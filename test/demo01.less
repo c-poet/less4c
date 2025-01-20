@@ -1,0 +1,26 @@
+// 1. 定义变量(全局变量)
+@bgColor: white;
+@Height: 50rpx;
+@H-Height: @Height + 10rpx;
+
+* {
+  color: aliceblue;
+}
+
+.contain {
+  background-color: @bgColor;
+}
+
+/** 测试 */
+.row {
+  height: @Height;
+  margin-left: @Height;
+}
+
+#id:hover {
+  a {
+    color: #fff;
+    width: 10px >= @Height;
+    height: 60px / @Height;
+  }
+}
