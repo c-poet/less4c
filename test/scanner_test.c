@@ -2,7 +2,7 @@
 #include "inc/core/file.h"
 
 int main() {
-    String *less = fileReadAll("D:\\OpenSource\\c-less-to-css\\test\\demo01.less");
+    String *less = fileReadAll("D:\\OpenSource\\less4c\\test\\demo01.less");
     if (less != NULL) {
         ScanResult *result = scanToken(less->chars);
         scanResultPrint(result);

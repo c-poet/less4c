@@ -3,6 +3,7 @@
 
 #include "ast.h"
 #include "inc/lexer/token.h"
+#include "inc/core/stack.h"
 
 /// 解析上下文
 typedef struct {
@@ -16,6 +17,10 @@ typedef struct {
     char *message;
     /// 正在构建的语法树
     Ast *ast;
+    /// token stack
+    Stack *tokenStack;
+    /// node stack
+    Stack *nodeStack;
 } ParseContext;
 
 /// 创建解析上下文
@@ -46,6 +51,16 @@ Token *parseContextPeekNext(ParseContext *context);
 /// @param context 上下文
 /// @param message 信息
 void parseContextMessage(ParseContext *context, char *message);
+
+/// 返回表达式异常信息
+/// @param context 上下文
+void parseContextTermExpected(ParseContext *context);
+
+/// 更换root节点执行
+/// @param context 上下文
+/// @param root 节点
+/// @param invoke 需要调用的函数
+void parseContextRunAsRoot(ParseContext *context, Node *root, void invoke(ParseContext *));
 
 /// 释放解释上下文
 /// @param context 上下文

@@ -1,5 +1,6 @@
 #include "inc/core/func.h"
 #include <malloc.h>
+#include <string.h>
 
 char *intToChars(int num) {
     int len = 1;
@@ -17,4 +18,34 @@ char *intToChars(int num) {
         num /= 10;
     }
     return chars;
+}
+
+BOOL charsToDouble(const char *chars, double *result) {
+    return charsToDoubleByRange(chars, 0, (int) strlen(chars), result);
+}
+
+BOOL charsToDoubleByRange(const char *chars, int start, int end, double *result) {
+    if (start >= end) {
+        return BOOL_FALSE;
+    }
+    double num = 0;
+    int s = 0;
+    while (start < end) {
+        if (chars[start] == '.' && s == 0) {
+            s = 10;
+            ++start;
+            continue;
+        } else if (chars[start] < '0' || chars[start] > '9') {
+            return BOOL_FALSE;
+        }
+        if (s == 0) {
+            num = num * 10 + chars[start] - '0';
+        } else {
+            num = num + ((double) (chars[start] - '0') / s);
+            s *= 10;
+        }
+        ++start;
+    }
+    *result = num;
+    return BOOL_TRUE;
 }

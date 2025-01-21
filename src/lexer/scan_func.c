@@ -127,7 +127,7 @@ void scanLiteral(ScanContext *context) {
     while (scanContextHasNext(context)) {
         c = scanContextPeekNext(context);
         if (!(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == TOKEN_UNDERLINE ||
-              c == TOKEN_AT || c == TOKEN_ROD)) {
+              c == TOKEN_AT || c == TOKEN_ROD || c == TOKEN_DOT)) {
             break;
         }
         scanContextNext(context);

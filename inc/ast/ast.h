@@ -3,6 +3,7 @@
 
 #include "node.h"
 
+/// 语法树
 typedef struct {
     /// 节点列表
     Node *root;

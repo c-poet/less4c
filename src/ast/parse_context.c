@@ -17,6 +17,15 @@ ParseContext *parseContextNew(Token **tokens) {
     context->root = ast->root;
     context->tokens = tokens;
     context->message = NULL;
+    context->tokenStack = stackNew(sizeof(Token *));
+    if (context->tokenStack == NULL) {
+        parseContextDel(context);
+        return NULL;
+    }
+    context->nodeStack = stackNew(sizeof(Node *));
+    if (context->nodeStack == NULL) {
+        parseContextDel(context);
+    }
     return context;
 }
 
@@ -51,10 +60,23 @@ void parseContextMessage(ParseContext *context, char *message) {
     }
 }
 
+void parseContextTermExpected(ParseContext *context) {
+    parseContextMessage(context, "Term expected");
+}
+
+void parseContextRunAsRoot(ParseContext *context, Node *root, void invoke(ParseContext *)) {
+    Node *old = context->root;
+    context->root = root;
+    invoke(context);
+    context->root = old;
+}
+
 void parseContextDel(ParseContext *context) {
     if (context) {
         free(context->message);
         astDel(context->ast);
+        stackDel(context->tokenStack);
+        stackDel(context->nodeStack);
         free(context);
     }
 }

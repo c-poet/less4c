@@ -40,13 +40,9 @@ void scanResultPrint(ScanResult *result) {
     listEach(result->tokens, doPrintToken);
 }
 
-void invokeTokenDel(POINTER token) {
-    tokenDel((Token *) token);
-}
-
 void scanResultDel(ScanResult *result) {
     if (result) {
-        listEach(result->tokens, invokeTokenDel);
+        listEach(result->tokens, (POINTER) tokenDel);
         listDel(result->tokens);
         free(result->message);
         free(result);

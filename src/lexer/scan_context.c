@@ -9,7 +9,7 @@ ScanContext *scanContextNew(const char *text, int start, int end) {
     }
     context->cur = start;
     context->start = start;
-    context->loc.row = 0;
+    context->loc.row = 1;
     context->loc.col = 0;
     context->end = end;
     context->text = text;

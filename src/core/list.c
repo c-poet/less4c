@@ -75,6 +75,10 @@ BOOL listRemove(List *list, POINTER val) {
     return index != list->size && listRemoveByIndex(list, index) != NULL;
 }
 
+POINTER listRemoveLast(List *list) {
+    return listRemoveByIndex(list, list->size - 1);
+}
+
 POINTER listRemoveByIndex(List *list, int index) {
     if (index < 0 || index >= list->size) {
         return NULL;
@@ -90,6 +94,10 @@ POINTER listRemoveByIndex(List *list, int index) {
     return val;
 }
 
+BOOL listEmpty(List *list) {
+    return list == NULL || list->size <= 0;
+}
+
 void listEach(List *list, void func(POINTER val)) {
     int i = 0;
     while (i < list->size) {
@@ -100,6 +108,7 @@ void listEach(List *list, void func(POINTER val)) {
 
 void listDel(List *list) {
     if (list) {
+        free(list->values);
         free(list);
     }
 }

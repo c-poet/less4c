@@ -2,9 +2,7 @@
 #define LESS4C_AST_NODE_H
 
 #include "inc/core/global.h"
-
-/// 每次扩容节点预留长度
-#define NODE_CHILD_R_LEN 20
+#include "inc/core/list.h"
 
 /// 节点类型
 typedef enum {
@@ -12,26 +10,32 @@ typedef enum {
     NT_StyleSheet,
     /// 变量声明
     NT_VarDeclare,
+    /// 访问变量
+    NT_CallVariable,
     /// 数量字面量
     NT_NumberLiteral,
     /// 字符串字面量
     NT_StringLiteral,
+    /// 二元操作表达式
+    NT_BINARY_EXPRESSION,
 } NodeType;
 
 /// 节点
 typedef struct S_Node {
-    /// 类型
+    /// 节点类型
     NodeType type;
-    /// 子级个数
-    int childNum;
-    /// 实现已划分的大小
-    int actualChildNum;
     /// 具体实现
     POINTER achiever;
     /// 节点父级
     struct S_Node *parent;
     /// 节点子级列表
-    struct S_Node **children;
+    List *children;
+
+    /// 打印调用的函数
+    void (*print)(POINTER);
+
+    /// 释放调用函数
+    void (*destroy)(POINTER);
 } Node;
 
 /// 创建节点
