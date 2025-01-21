@@ -37,24 +37,21 @@ void printTab(int num) {
     }
 }
 
-void doNodePrint(Node *node, int level) {
+void nodePrint(const Node *node) {
+    nodePrintByLevel(node, 0);
+}
+
+void nodePrintByLevel(const Node *node, int level) {
     printTab(level);
     printf("- %s", nodeTypeAsString(node->type));
     if (node->print != NULL) {
-        printf("[");
-        node->print(node->achiever);
-        printf("]");
+        node->print(node->achiever, level);
     }
-    printf("\n");
     int i = 0;
     while (i < node->children->size) {
-        doNodePrint(node->children->values[i], level + 1);
+        nodePrintByLevel(node->children->values[i], level + 1);
         ++i;
     }
-}
-
-void nodePrint(Node *node) {
-    doNodePrint(node, 0);
 }
 
 void nodeDel(Node *node) {

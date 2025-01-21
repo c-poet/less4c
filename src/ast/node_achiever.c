@@ -15,8 +15,8 @@ void varDeclareDel(VarDeclare *varDeclare) {
     free(varDeclare);
 }
 
-void varDeclarePrint(VarDeclare *varDeclare) {
-    printf("name=%s", varDeclare->name);
+void varDeclarePrint(VarDeclare *varDeclare, int level) {
+    printf("[name=%s]\n", varDeclare->name);
 }
 
 Node *nodeVarDeclareNew(const char *name) {
@@ -48,9 +48,9 @@ void callVariableDel(CallVariable *callVariable) {
     free(callVariable);
 }
 
-void callVariablePrint(CallVariable *callVariable) {
-    printf("name=%s => ", callVariable->name);
-    callVariable->var->print(callVariable->var->achiever);
+void callVariablePrint(CallVariable *callVariable, int level) {
+    printf("[name=%s]\n", callVariable->name);
+    nodePrintByLevel(callVariable->var, level + 1);
 }
 
 Node *nodeCallVariableNew(const char *name, const Node *var) {
@@ -83,8 +83,8 @@ void numberLiteralDel(NumberLiteral *numberLiteral) {
     free(numberLiteral);
 }
 
-void numberLiteralPrint(NumberLiteral *numberLiteral) {
-    printf("value=%s,number=%f,unit=%s", numberLiteral->value, numberLiteral->number, numberLiteral->unit);
+void numberLiteralPrint(NumberLiteral *numberLiteral, int level) {
+    printf("[value=%s,number=%f,unit=%s]\n", numberLiteral->value, numberLiteral->number, numberLiteral->unit);
 }
 
 Node *nodeNumberLiteralNew(const char *val, double number, const char *unit) {
@@ -115,8 +115,8 @@ void stringLiteralDel(StringLiteral *stringLiteral) {
     free(stringLiteral);
 }
 
-void stringLiteralPrint(StringLiteral *stringLiteral) {
-    printf("value=%s", stringLiteral->value);
+void stringLiteralPrint(StringLiteral *stringLiteral, int level) {
+    printf("[value=%s]\n", stringLiteral->value);
 }
 
 Node *nodeStringLiteralNew(const char *val) {
@@ -134,12 +134,14 @@ Node *nodeStringLiteralNew(const char *val) {
     return node;
 }
 
-BinaryExpression *binaryExpressionNew(const char *op) {
+BinaryExpression *binaryExpressionNew(const char *op, const Node *left, const Node *right) {
     BinaryExpression *binaryExpression = malloc(sizeof(BinaryExpression));
     if (!binaryExpression) {
         return NULL;
     }
     binaryExpression->operator = op;
+    binaryExpression->left = left;
+    binaryExpression->right = right;
     return binaryExpression;
 }
 
@@ -149,12 +151,14 @@ void binaryExpressionDel(BinaryExpression *binaryExpression) {
     }
 }
 
-void binaryExpressionPrint(BinaryExpression *binaryExpression) {
-    printf("operator=%s", binaryExpression->operator);
+void binaryExpressionPrint(BinaryExpression *binaryExpression, int level) {
+    printf("[operator=%s]\n", binaryExpression->operator);
+    nodePrintByLevel(binaryExpression->left, level + 1);
+    nodePrintByLevel(binaryExpression->right, level + 1);
 }
 
-Node *nodeBinaryExpressionNew(const char *op, Node *left, Node *right) {
-    BinaryExpression *binaryExpression = binaryExpressionNew(op);
+Node *nodeBinaryExpressionNew(const char *op, const Node *left, const Node *right) {
+    BinaryExpression *binaryExpression = binaryExpressionNew(op, left, right);
     if (binaryExpression == NULL) {
         return NULL;
     }
@@ -165,7 +169,5 @@ Node *nodeBinaryExpressionNew(const char *op, Node *left, Node *right) {
     }
     node->print = (POINTER) binaryExpressionPrint;
     node->destroy = (POINTER) binaryExpressionDel;
-    nodeAddChild(node, left);
-    nodeAddChild(node, right);
     return node;
 }

@@ -38,7 +38,16 @@ typedef struct {
 typedef struct {
     /// 操作符
     const char *operator;
+    /// 操作左值
+    const Node *left;
+    /// 操作右值
+    const Node *right;
 } BinaryExpression;
+
+/// 规则
+typedef struct {
+
+} Rule;
 
 /// 实例变量申明节点
 /// @param name 变量名
@@ -66,6 +75,6 @@ Node *nodeStringLiteralNew(const char *val);
 /// @param op 操作符
 /// @param left 左值
 /// @param right 右值
-Node *nodeBinaryExpressionNew(const char *op, Node *left, Node *right);
+Node *nodeBinaryExpressionNew(const char *op, const Node *left, const Node *right);
 
 #endif

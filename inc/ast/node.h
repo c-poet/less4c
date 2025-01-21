@@ -32,7 +32,7 @@ typedef struct S_Node {
     List *children;
 
     /// 打印调用的函数
-    void (*print)(POINTER);
+    void (*print)(POINTER, int);
 
     /// 释放调用函数
     void (*destroy)(POINTER);
@@ -59,7 +59,12 @@ BOOL nodeInsertChild(Node *parent, Node *child, int index);
 
 /// 打印节点
 /// @param node 节点
-void nodePrint(Node *node);
+void nodePrint(const Node *node);
+
+/// 打印节点
+/// @param node 节点
+/// @param level 层次
+void nodePrintByLevel(const Node *node, int level);
 
 /// 释放节点
 /// @param node 节点

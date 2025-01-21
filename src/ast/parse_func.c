@@ -34,17 +34,17 @@ void callParseNext(ParseContext *context, BOOL continueWith(ParseContext *)) {
 
 void cleanParseContextStack(ParseContext *context) {
     Token *token;
-    Node *node1, *node2;
+    Node *right, *left;
     if (!stackEmpty(context->tokenStack)) {
         stackPush(context->nodeStack, listRemoveLast(context->root->children));
         while (!stackEmpty(context->tokenStack)) {
             token = stackPop(context->tokenStack);
-            node1 = stackPop(context->nodeStack);
-            node2 = stackPop(context->nodeStack);
-            if (node1 == NULL || node2 == NULL) {
+            right = stackPop(context->nodeStack);
+            left = stackPop(context->nodeStack);
+            if (right == NULL || left == NULL) {
                 break;
             }
-            stackPush(context->nodeStack, nodeBinaryExpressionNew(token->value, node2, node1));
+            stackPush(context->nodeStack, nodeBinaryExpressionNew(token->value, left, right));
         }
     }
     if (context->nodeStack->size > 1 || !stackEmpty(context->tokenStack)) {
@@ -118,17 +118,17 @@ void parseOperator(ParseContext *context) {
         }
         stackPush(context->nodeStack, listRemoveLast(root->children));
         Token *token;
-        Node *node1, *node2;
+        Node *right, *left;
         while (!stackEmpty(context->tokenStack) &&
                operatorPriority((token = stackPeek(context->tokenStack))->value) >=
                operatorPriority(parseContextPeekPre(context)->value)) {
             stackPop(context->tokenStack);
-            node1 = stackPop(context->nodeStack);
-            node2 = stackPop(context->nodeStack);
-            if (node1 == NULL || node2 == NULL) {
+            right = stackPop(context->nodeStack);
+            left = stackPop(context->nodeStack);
+            if (right == NULL || left == NULL) {
                 break;
             }
-            stackPush(context->nodeStack, nodeBinaryExpressionNew(token->value, node2, node1));
+            stackPush(context->nodeStack, nodeBinaryExpressionNew(token->value, left, right));
         }
         stackPush(context->tokenStack, parseContextPeekPre(context));
     }
@@ -145,19 +145,19 @@ void parseBracket(ParseContext *context) {
             stackPush(context->tokenStack, parseContextPeekPre(context));
         } else {
             Token *token;
-            Node *node1 = listRemoveLast(root->children), *node2;
-            if (node1 == NULL) {
+            Node *right = listRemoveLast(root->children), *left;
+            if (right == NULL) {
                 parseContextTermExpected(context);
                 return;
             }
             while (!stackEmpty(context->tokenStack) && (token = stackPop(context->tokenStack))->value[0] != '(') {
-                node2 = stackPop(context->nodeStack);
-                if (node2 == NULL) {
+                left = stackPop(context->nodeStack);
+                if (left == NULL) {
                     break;
                 }
-                node1 = nodeBinaryExpressionNew(token->value, node2, node1);
+                right = nodeBinaryExpressionNew(token->value, left, right);
             }
-            nodeAddChild(root, node1);
+            nodeAddChild(root, right);
             if (token->value[0] != '(') {
                 parseContextTermExpected(context);
             }
