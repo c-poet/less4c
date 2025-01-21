@@ -49,8 +49,8 @@ void callVariableDel(CallVariable *callVariable) {
 }
 
 void callVariablePrint(CallVariable *callVariable, int level) {
-    printf("[name=%s]\n", callVariable->name);
-    nodePrintByLevel(callVariable->var, level + 1);
+    printf("[name=%s] => ", callVariable->name);
+    callVariable->var->print(callVariable->var->achiever, level);
 }
 
 Node *nodeCallVariableNew(const char *name, const Node *var) {

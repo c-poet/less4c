@@ -18,6 +18,24 @@ typedef enum {
     NT_StringLiteral,
     /// 二元操作表达式
     NT_BinaryExpression,
+    /// 规则
+    NT_RULE,
+    /// 块
+    NT_Block,
+    /// 元素选择列表
+    NT_SelectorList,
+    /// 选择器
+    NT_Selector,
+    /// 类型选择器
+    NT_TypeSelector,
+    /// ID选择器
+    NT_IdSelector,
+    /// 类选择器
+    NT_ClassSelector,
+    /// 伪类选择器
+    NT_PseudoClassSelector,
+    /// 伪元素选择
+    NT_PseudoElementSelector,
 } NodeType;
 
 /// 节点

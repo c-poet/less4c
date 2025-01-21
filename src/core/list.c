@@ -99,10 +99,12 @@ BOOL listEmpty(List *list) {
 }
 
 void listEach(List *list, void func(POINTER val)) {
-    int i = 0;
-    while (i < list->size) {
-        func(list->values[i]);
-        ++i;
+    if (list) {
+        int i = 0;
+        while (i < list->size) {
+            func(list->values[i]);
+            ++i;
+        }
     }
 }
 

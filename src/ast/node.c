@@ -12,15 +12,17 @@ Node *nodeNew(NodeType type, POINTER achiever) {
     node->parent = NULL;
     node->print = NULL;
     node->destroy = NULL;
-    node->children = listNew(sizeof(Node *));
-    if (!node->children) {
-        nodeDel(node);
-        return NULL;
-    }
+    node->children = NULL;
     return node;
 }
 
 BOOL nodeAddChild(Node *parent, Node *child) {
+    if (parent->children == NULL) {
+        parent->children = listNew(sizeof(Node *));
+        if (!parent->children) {
+            return BOOL_FALSE;
+        }
+    }
     child->parent = parent;
     return listAdd(parent->children, child);
 }
@@ -47,10 +49,12 @@ void nodePrintByLevel(const Node *node, int level) {
     if (node->print != NULL) {
         node->print(node->achiever, level);
     }
-    int i = 0;
-    while (i < node->children->size) {
-        nodePrintByLevel(node->children->values[i], level + 1);
-        ++i;
+    if (!listEmpty(node->children)) {
+        int i = 0;
+        while (i < node->children->size) {
+            nodePrintByLevel(node->children->values[i], level + 1);
+            ++i;
+        }
     }
 }
 
@@ -79,6 +83,24 @@ char *nodeTypeAsString(NodeType type) {
             return "StringLiteral";
         case NT_BinaryExpression:
             return "BinaryExpression";
+        case NT_RULE:
+            return "Rule";
+        case NT_Block:
+            return "Block";
+        case NT_SelectorList:
+            return "SelectorList";
+        case NT_Selector:
+            return "Selector";
+        case NT_TypeSelector:
+            return "TypeSelector";
+        case NT_IdSelector:
+            return "IdSelector";
+        case NT_ClassSelector:
+            return "ClassSelector";
+        case NT_PseudoClassSelector:
+            return "PseudoClassSelector";
+        case NT_PseudoElementSelector:
+            return "PseudoElementSelector";
         default:
             return "";
     }
