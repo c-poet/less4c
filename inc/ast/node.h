@@ -17,7 +17,7 @@ typedef enum {
     /// 字符串字面量
     NT_StringLiteral,
     /// 二元操作表达式
-    NT_BINARY_EXPRESSION,
+    NT_BinaryExpression,
 } NodeType;
 
 /// 节点

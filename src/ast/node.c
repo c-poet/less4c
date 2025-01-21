@@ -80,6 +80,8 @@ char *nodeTypeAsString(NodeType type) {
             return "NumberLiteral";
         case NT_StringLiteral:
             return "StringLiteral";
+        case NT_BinaryExpression:
+            return "BinaryExpression";
         default:
             return "";
     }

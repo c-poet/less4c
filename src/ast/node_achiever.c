@@ -158,7 +158,7 @@ Node *nodeBinaryExpressionNew(const char *op, Node *left, Node *right) {
     if (binaryExpression == NULL) {
         return NULL;
     }
-    Node *node = nodeNew(NT_BINARY_EXPRESSION, binaryExpression);
+    Node *node = nodeNew(NT_BinaryExpression, binaryExpression);
     if (node == NULL) {
         binaryExpressionDel(binaryExpression);
         return NULL;
