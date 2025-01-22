@@ -1,7 +1,7 @@
 #ifndef LESS4C_AST_H
 #define LESS4C_AST_H
 
-#include "node.h"
+#include "inc/ast/node/node.h"
 
 /// 语法树
 typedef struct {

@@ -21,6 +21,8 @@ typedef struct {
     Stack *tokenStack;
     /// node stack
     Stack *nodeStack;
+    /// NodeId记录
+    int nextNodeId;
 } ParseContext;
 
 /// 创建解析上下文

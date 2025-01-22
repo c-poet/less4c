@@ -1,23 +1,19 @@
 #include "inc/ast/ast.h"
 #include <malloc.h>
 #include <stdio.h>
-
-void styleSheetPrint(POINTER styleSheet, int level) {
-    printf("[AST]\n");
-}
+#include "inc/ast/node/style_sheet.h"
 
 Ast *astNew() {
-    Node *root = nodeNew(NT_StyleSheet, NULL);
-    if (root == NULL) {
+    StyleSheet *styleSheet = styleSheetNew();
+    if (styleSheet == NULL) {
         return NULL;
     }
-    root->print = styleSheetPrint;
     Ast *ast = malloc(sizeof(Ast));
     if (!ast) {
-        nodeDel(root);
+        styleSheetDel(styleSheet);
         return NULL;
     }
-    ast->root = root;
+    ast->root = (POINTER) styleSheet;
     return ast;
 }
 

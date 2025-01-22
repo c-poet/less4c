@@ -1,8 +1,13 @@
 #include "inc/ast/parse_func.h"
-#include "inc/ast/node_achiever.h"
 #include "inc/core/style.h"
 #include "inc/core/func.h"
 #include "inc/ast/priority.h"
+#include "inc/ast/node/style_sheet.h"
+#include "inc/ast/node/number_literal.h"
+#include "inc/ast/node/string_literal.h"
+#include "inc/ast/node/var_declare.h"
+#include "inc/ast/node/call_variable.h"
+#include "inc/ast/node/binary_expression.h"
 #include <string.h>
 
 void callParseNext(ParseContext *context, BOOL continueWith(ParseContext *)) {
@@ -33,18 +38,20 @@ void callParseNext(ParseContext *context, BOOL continueWith(ParseContext *)) {
 }
 
 void cleanParseContextStack(ParseContext *context) {
-    Token *token;
-    Node *right, *left;
-    if (!stackEmpty(context->tokenStack)) {
-        stackPush(context->nodeStack, listRemoveLast(context->root->children));
-        while (!stackEmpty(context->tokenStack)) {
-            token = stackPop(context->tokenStack);
-            right = stackPop(context->nodeStack);
-            left = stackPop(context->nodeStack);
-            if (right == NULL || left == NULL) {
-                break;
+    if (context->root->type == NT_VarDeclare) {
+        Token *token;
+        Node *right, *left;
+        if (!stackEmpty(context->tokenStack)) {
+            stackPush(context->nodeStack, listRemoveLast(((VarDeclare *) context->root)->children));
+            while (!stackEmpty(context->tokenStack)) {
+                token = stackPop(context->tokenStack);
+                right = stackPop(context->nodeStack);
+                left = stackPop(context->nodeStack);
+                if (right == NULL || left == NULL) {
+                    break;
+                }
+                stackPush(context->nodeStack, binaryExpressionNew(token->value, left, right));
             }
-            stackPush(context->nodeStack, nodeBinaryExpressionNew(token->value, left, right));
         }
     }
     if (context->nodeStack->size > 1 || !stackEmpty(context->tokenStack)) {
@@ -67,13 +74,21 @@ void continueEndWithSemicolon(ParseContext *context) {
 }
 
 Node *findVariable(ParseContext *context, const char *name) {
+    List *children;
     Node *node = context->root;
     while (node != NULL) {
-        if (node->children != NULL) {
-            for (int i = 0; i < node->children->size; ++i) {
-                if (((Node *) node->children->values[i])->type == NT_VarDeclare
-                    && strcmp(((VarDeclare *) ((Node *) node->children->values[i])->achiever)->name, name) == 0) {
-                    return node->children->values[i];
+        if (node->type == NT_StyleSheet) {
+            children = ((StyleSheet *) node)->children;
+        } else if (node->type == NT_VarDeclare) {
+            children = ((VarDeclare *) node)->children;
+        } else {
+            children = NULL;
+        }
+        if (children != NULL) {
+            for (int i = 0; i < children->size; ++i) {
+                if (((Node *) children->values[i])->type == NT_VarDeclare
+                    && strcmp(((VarDeclare *) children->values[i])->name, name) == 0) {
+                    return children->values[i];
                 }
             }
         }
@@ -94,16 +109,16 @@ void parseIdentifier(ParseContext *context) {
             parseContextMessage(context, "Cannot find variable");
             return;
         }
-        Node *node = nodeCallVariableNew(identifier->value, var);
-        nodeAddChild(context->root, node);
+        CallVariable *callVariable = callVariableNew(identifier->value, var);
+        nodeAddChild(context->root, (POINTER) callVariable);
         return;
     }
     if (parseContextPeekNext(context)->type == TT_Colon) {
         parseContextNext(context);
-        Node *node = nodeVarDeclareNew(identifier->value);
-        nodeAddChild(context->root, node);
-        parseContextRunAsRoot(context, node, continueEndWithSemicolon);
-        if (listEmpty(node->children)) {
+        VarDeclare *varDeclare = varDeclareNew(identifier->value);
+        nodeAddChild(context->root, (POINTER) varDeclare);
+        parseContextRunAsRoot(context, (POINTER) varDeclare, continueEndWithSemicolon);
+        if (listEmpty(varDeclare->children)) {
             parseContextTermExpected(context);
         }
     }
@@ -112,11 +127,11 @@ void parseIdentifier(ParseContext *context) {
 void parseOperator(ParseContext *context) {
     Node *root = context->root;
     if (root->type == NT_VarDeclare) {
-        if (listEmpty(root->children)) {
+        if (listEmpty(((VarDeclare *) root)->children)) {
             parseContextTermExpected(context);
             return;
         }
-        stackPush(context->nodeStack, listRemoveLast(root->children));
+        stackPush(context->nodeStack, listRemoveLast(((VarDeclare *) root)->children));
         Token *token;
         Node *right, *left;
         while (!stackEmpty(context->tokenStack) &&
@@ -128,7 +143,7 @@ void parseOperator(ParseContext *context) {
             if (right == NULL || left == NULL) {
                 break;
             }
-            stackPush(context->nodeStack, nodeBinaryExpressionNew(token->value, left, right));
+            stackPush(context->nodeStack, binaryExpressionNew(token->value, left, right));
         }
         stackPush(context->tokenStack, parseContextPeekPre(context));
     }
@@ -145,7 +160,7 @@ void parseBracket(ParseContext *context) {
             stackPush(context->tokenStack, parseContextPeekPre(context));
         } else {
             Token *token;
-            Node *right = listRemoveLast(root->children), *left;
+            Node *right = listRemoveLast(((VarDeclare *) root)->children), *left;
             if (right == NULL) {
                 parseContextTermExpected(context);
                 return;
@@ -155,7 +170,7 @@ void parseBracket(ParseContext *context) {
                 if (left == NULL) {
                     break;
                 }
-                right = nodeBinaryExpressionNew(token->value, left, right);
+                right = (POINTER) binaryExpressionNew(token->value, left, right);
             }
             nodeAddChild(root, right);
             if (token->value[0] != '(') {
@@ -169,8 +184,8 @@ void parseLiteral(ParseContext *context) {
     Token *token = parseContextPeekPre(context);
     double number = 0;
     if (charsToDouble(token->value, &number)) {
-        Node *node = nodeNumberLiteralNew(token->value, number, NULL);
-        nodeAddChild(context->root, node);
+        NumberLiteral *numberLiteral = numberLiteralNew(token->value, number, NULL);
+        nodeAddChild(context->root, (POINTER) numberLiteral);
         return;
     }
     const char *unit = NULL;
@@ -183,12 +198,12 @@ void parseLiteral(ParseContext *context) {
         }
     }
     if (unit != NULL && charsToDoubleByRange(token->value, 0, l1 - l2, &number)) {
-        Node *node = nodeNumberLiteralNew(token->value, number, unit);
-        nodeAddChild(context->root, node);
+        NumberLiteral *numberLiteral = numberLiteralNew(token->value, number, unit);
+        nodeAddChild(context->root, (POINTER) numberLiteral);
         return;
     }
-    Node *node = nodeStringLiteralNew(token->value);
-    nodeAddChild(context->root, node);
+    StringLiteral *stringLiteral = stringLiteralNew(token->value);
+    nodeAddChild(context->root, (POINTER) stringLiteral);
 }
 
 void endParse(ParseContext *context) {

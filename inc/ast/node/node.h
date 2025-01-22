@@ -23,7 +23,7 @@ typedef enum {
     /// 块
     NT_Block,
     /// 元素选择列表
-    NT_SelectorList,
+    NT_Selectors,
     /// 选择器
     NT_Selector,
     /// 类型选择器
@@ -38,29 +38,24 @@ typedef enum {
     NT_PseudoElementSelector,
 } NodeType;
 
-/// 节点
+/// 节点基本结构定义
+#define BASE_NODE \
+    NodeType type;\
+    struct ParseContext *context; \
+    struct S_Node *parent; \
+    BOOL (*addChild)(struct S_Node*, struct S_Node*); \
+    void (*print)(struct S_Node*, int);               \
+    void (*destroy)(struct S_Node*);
+
+/// 普通节点
 typedef struct S_Node {
-    /// 节点类型
-    NodeType type;
-    /// 具体实现
-    POINTER achiever;
-    /// 节点父级
-    struct S_Node *parent;
-    /// 节点子级列表
-    List *children;
-
-    /// 打印调用的函数
-    void (*print)(POINTER, int);
-
-    /// 释放调用函数
-    void (*destroy)(POINTER);
+    BASE_NODE
 } Node;
 
-/// 创建节点
-/// @param type 节点类型
-/// @param achiever 具体实现
-/// @return 节点
-Node *nodeNew(NodeType type, POINTER achiever);
+/// 节点信息初始化
+/// @param context 上下文信息
+/// @param node 节点
+void nodeInit(Node *node);
 
 /// 添加子节点
 /// @param parent 父节点
@@ -68,25 +63,28 @@ Node *nodeNew(NodeType type, POINTER achiever);
 /// @return 是否添加成功
 BOOL nodeAddChild(Node *parent, Node *child);
 
-/// 插入节点
-/// @param parent 父节点
-/// @param child 子节点
-/// @param index 插入的下标
-/// @return 是否插入成功
-BOOL nodeInsertChild(Node *parent, Node *child, int index);
+/// 打印指定数据的制表符
+/// @param num 打印的数量
+void nodePrintTab(int num);
 
 /// 打印节点
 /// @param node 节点
-void nodePrint(const Node *node);
+void nodePrint(Node *node);
 
-/// 打印节点
+/// 打印节点类型
 /// @param node 节点
 /// @param level 层次
-void nodePrintByLevel(const Node *node, int level);
+void nodePrintTypeByLevel(Node *node, int level);
+
+void nodePrintByLevel(Node *node, int level);
+
+void nodeListPrintByLevel(List *nodes, int level);
 
 /// 释放节点
 /// @param node 节点
 void nodeDel(Node *node);
+
+void nodeListDel(List *nodes);
 
 /// 节点类型转字符串
 /// @param type 节点类型

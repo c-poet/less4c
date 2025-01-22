@@ -1,72 +1,69 @@
-#include "inc/ast/node.h"
-#include <malloc.h>
+#include "inc/ast/node/node.h"
 #include <stdio.h>
 
-Node *nodeNew(NodeType type, POINTER achiever) {
-    Node *node = malloc(sizeof(Node));
-    if (!node) {
-        return NULL;
-    }
-    node->type = type;
-    node->achiever = achiever;
+void nodeInit(Node *node) {
+    node->type = NT_StyleSheet;
     node->parent = NULL;
+    node->addChild = NULL;
     node->print = NULL;
     node->destroy = NULL;
-    node->children = NULL;
-    return node;
 }
 
 BOOL nodeAddChild(Node *parent, Node *child) {
-    if (parent->children == NULL) {
-        parent->children = listNew(sizeof(Node *));
-        if (!parent->children) {
-            return BOOL_FALSE;
+    if (parent->addChild != NULL) {
+        if (parent->addChild(parent, child)) {
+            child->parent = parent;
+            return BOOL_TRUE;
         }
     }
-    child->parent = parent;
-    return listAdd(parent->children, child);
+    return BOOL_FALSE;
 }
 
-BOOL nodeInsertChild(Node *parent, Node *child, int index) {
-    child->parent = parent;
-    return listInsert(parent->children, index, child);
-}
-
-void printTab(int num) {
+void nodePrintTab(int num) {
     while (num > 0) {
         printf("\t");
         --num;
     }
 }
 
-void nodePrint(const Node *node) {
+void nodePrint(Node *node) {
     nodePrintByLevel(node, 0);
 }
 
-void nodePrintByLevel(const Node *node, int level) {
-    printTab(level);
-    printf("- %s", nodeTypeAsString(node->type));
-    if (node->print != NULL) {
-        node->print(node->achiever, level);
+void nodePrintTypeByLevel(Node *node, int level) {
+    if (level != 0) {
+        printf("\n");
     }
-    if (!listEmpty(node->children)) {
+    nodePrintTab(level);
+    printf("- %s", nodeTypeAsString(node->type));
+}
+
+void nodePrintByLevel(Node *node, int level) {
+    if (node && node->print != NULL) {
+        node->print(node, level);
+    }
+}
+
+void nodeListPrintByLevel(List *nodes, int level) {
+    if (nodes && nodes->size > 0) {
         int i = 0;
-        while (i < node->children->size) {
-            nodePrintByLevel(node->children->values[i], level + 1);
+        while (i < nodes->size) {
+            if (((Node *) nodes->values[i])->print) {
+                ((Node *) nodes->values[i])->print(nodes->values[i], level);
+            }
             ++i;
         }
     }
 }
 
 void nodeDel(Node *node) {
-    if (node) {
-        listEach(node->children, (POINTER) nodeDel);
-        if (node->destroy != NULL) {
-            node->destroy(node->achiever);
-        }
-        free(node->children);
-        free(node);
+    if (node && node->destroy != NULL) {
+        node->destroy(node);
     }
+}
+
+void nodeListDel(List *nodes) {
+    listEach(nodes, (POINTER) nodeDel);
 }
 
 char *nodeTypeAsString(NodeType type) {
@@ -87,8 +84,8 @@ char *nodeTypeAsString(NodeType type) {
             return "Rule";
         case NT_Block:
             return "Block";
-        case NT_SelectorList:
-            return "SelectorList";
+        case NT_Selectors:
+            return "Selectors";
         case NT_Selector:
             return "Selector";
         case NT_TypeSelector:
