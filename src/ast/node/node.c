@@ -110,6 +110,8 @@ char *nodeTypeAsString(NodeType type) {
             return "Declaration";
         case NT_Value:
             return "Value";
+        case NT_IMPORT:
+            return "Import";
         default:
             return "";
     }

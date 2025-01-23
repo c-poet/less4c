@@ -2,6 +2,7 @@
 #define LESS4C_LEXER_SCANNER_SC_H
 
 #include "scan_result.h"
+#include "scan_config.h"
 #include "inc/core/chars_ref.h"
 
 /// 扫描上下文
@@ -19,6 +20,8 @@ typedef struct {
         /// 当前列
         int col;
     } loc;
+    /// 扫描配置
+    ScanConfig *config;
     /// 正在扫描的文本
     const char *text;
     /// 扫描结果返回
@@ -26,11 +29,12 @@ typedef struct {
 } ScanContext;
 
 /// 实例化扫描上下文
+/// @param config 扫描配置
 /// @param text 扫描的文本
 /// @param start 开始索引
 /// @param end 结束索引
 /// @return 扫描上下文
-ScanContext *scanContextNew(const char *text, int start, int end);
+ScanContext *scanContextNew(ScanConfig *config, const char *text, int start, int end);
 
 /// 跳过空白符
 /// @param context 上下文

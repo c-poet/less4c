@@ -12,12 +12,17 @@ typedef struct {
 } StringLiteral;
 
 /// 创建字符串字面量节点
-/// @param val 字面量值
+/// @param value 字面量值
 /// @return 字符串字面量
-StringLiteral *stringLiteralNew(char *val);
+StringLiteral *stringLiteralNew(char *value);
 
+/// 打印字符串字面量
+/// @param stringLiteral 字符串字面量
+/// @param level 层级
 void stringLiteralPrint(StringLiteral *stringLiteral, int level);
 
+/// 释放字符串字面量
+/// @param stringLiteral 字符串字面量
 void stringLiteralDel(StringLiteral *stringLiteral);
 
 #endif

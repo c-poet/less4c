@@ -13,10 +13,18 @@ typedef struct {
     Node *block;
 } Rule;
 
+/// 创建规则
+/// @param prelude 选择器列表
+/// @param block 规则块
 Rule *ruleNew(Node *prelude, Node *block);
 
+/// 规则打印
+/// @param rule 规则
+/// @param level 层级
 void rulePrint(Rule *rule, int level);
 
+/// 释放规则
+/// @param rule 规则
 void ruleDel(Rule *rule);
 
 #endif

@@ -1,4 +1,5 @@
 #include "inc/ast/node/pseudo_class_selector.h"
+#include "inc/core/func.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -11,7 +12,7 @@ PseudoClassSelector *pseudoClassSelectorNew(char *name) {
     pseudoClassSelector->type = NT_PseudoClassSelector;
     pseudoClassSelector->print = (POINTER) pseudoClassSelectorPrint;
     pseudoClassSelector->destroy = (POINTER) pseudoClassSelectorDel;
-    pseudoClassSelector->name = name;
+    pseudoClassSelector->name = charsClone(name);
     return pseudoClassSelector;
 }
 
@@ -22,6 +23,7 @@ void pseudoClassSelectorPrint(PseudoClassSelector *pseudoClassSelector, int leve
 
 void pseudoClassSelectorDel(PseudoClassSelector *pseudoClassSelector) {
     if (pseudoClassSelector) {
+        free(pseudoClassSelector->name);
         free(pseudoClassSelector);
     }
 }

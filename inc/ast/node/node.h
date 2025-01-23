@@ -40,6 +40,8 @@ typedef enum {
     NT_Declaration,
     /// 属性值
     NT_Value,
+    /// 导入
+    NT_IMPORT,
 } NodeType;
 
 /// 节点基本结构定义

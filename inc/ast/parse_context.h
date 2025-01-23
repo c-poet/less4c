@@ -2,6 +2,7 @@
 #define LESS4C_AST_PARSE_CONTEXT_H
 
 #include "ast.h"
+#include "parse_config.h"
 #include "inc/lexer/token.h"
 
 /// 解析上下文
@@ -16,13 +17,14 @@ typedef struct {
     char *message;
     /// 正在构建的语法树
     Ast *ast;
-    /// NodeId记录
-    int nextNodeId;
+    /// 解析配置
+    ParseConfig *config;
 } ParseContext;
 
 /// 创建解析上下文
+/// @param config 解析配置
 /// @return 上下文
-ParseContext *parseContextNew(Token **tokens);
+ParseContext *parseContextNew(ParseConfig *config, Token **tokens);
 
 /// 判断是否继续
 /// @param context 上下文

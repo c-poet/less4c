@@ -1,4 +1,5 @@
 #include "inc/ast/node/binary_expression.h"
+#include "inc/core/func.h"
 #include <stdio.h>
 #include <malloc.h>
 
@@ -9,7 +10,7 @@ BinaryExpression *binaryExpressionNew(char *op, Node *left, Node *right) {
     }
     nodeInit((POINTER) binaryExpression);
     binaryExpression->type = NT_BinaryExpression;
-    binaryExpression->operator = op;
+    binaryExpression->operator = charsClone(op);
     binaryExpression->left = left;
     binaryExpression->right = right;
     binaryExpression->print = (POINTER) binaryExpressionPrint;
@@ -30,6 +31,7 @@ void binaryExpressionDel(BinaryExpression *binaryExpression) {
     if (binaryExpression) {
         nodeDel(binaryExpression->left);
         nodeDel(binaryExpression->right);
+        free(binaryExpression->operator);
         free(binaryExpression);
     }
 }

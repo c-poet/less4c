@@ -2,19 +2,19 @@
 #include "inc/core/str.h"
 #include <malloc.h>
 
-ParseContext *parseContextNew(Token **tokens) {
-    Ast *ast = astNew();
-    if (!ast) {
-        return NULL;
-    }
+ParseContext *parseContextNew(ParseConfig *config, Token **tokens) {
     ParseContext *context = malloc(sizeof(ParseContext));
     if (!context) {
-        astDel(ast);
         return NULL;
     }
     context->cur = 0;
-    context->ast = ast;
-    context->root = ast->root;
+    context->ast = astNew();
+    if (!context->ast) {
+        parseContextDel(context);
+        return NULL;
+    }
+    context->root = context->ast->root;
+    context->config = config;
     context->tokens = tokens;
     context->message = NULL;
     return context;

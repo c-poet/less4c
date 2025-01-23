@@ -1,4 +1,5 @@
 #include "inc/ast/node/id_selector.h"
+#include "inc/core/func.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -9,7 +10,7 @@ IdSelector *idSelectorNew(char *name) {
     }
     nodeInit((POINTER) idSelector);
     idSelector->type = NT_IdSelector;
-    idSelector->name = name;
+    idSelector->name = charsClone(name);
     idSelector->print = (POINTER) idSelectorPrint;
     idSelector->destroy = (POINTER) idSelectorDel;
     return idSelector;
@@ -22,6 +23,7 @@ void idSelectorPrint(IdSelector *idSelector, int level) {
 
 void idSelectorDel(IdSelector *idSelector) {
     if (idSelector) {
+        free(idSelector->name);
         free(idSelector);
     }
 }

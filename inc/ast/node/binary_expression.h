@@ -21,8 +21,13 @@ typedef struct {
 /// @param right 右值
 BinaryExpression *binaryExpressionNew(char *op, Node *left, Node *right);
 
+/// 打印表达式
+/// @param binaryExpression 表达式
+/// @param level 层级
 void binaryExpressionPrint(BinaryExpression *binaryExpression, int level);
 
+/// 释放表达式
+/// @param binaryExpression 表达式
 void binaryExpressionDel(BinaryExpression *binaryExpression);
 
 #endif

@@ -1,21 +1,13 @@
 #include "inc/lexer/scanner.h"
 #include "inc/ast/parser.h"
-#include "inc/core/file.h"
-
-#include <stdio.h>
 
 int main() {
-    String *less = fileReadAll("D:\\OpenSource\\less4c\\test\\demo01.less");
-    if (less != NULL) {
-        ScanResult *result = scanToken(less->chars);
-        if (result != NULL) {
-            ParseResult *parseResult = parseToAstByScanResult(result);
-            parseResultPrint(parseResult);
-            parseResultDel(parseResult);
-        }
-        scanResultDel(result);
-        stringDel(less);
-    }
+    ParseConfig *parseConfig = parseConfigNew();
+    parseConfig->filePath = "D:\\OpenSource\\less4c\\test\\";
+    ParseResult *parseResult = parseToAstByFile(parseConfig, "demo01.less");
+    parseResultPrint(parseResult);
+    parseConfigDel(parseConfig);
+    parseResultDel(parseResult);
     return 0;
 }
 

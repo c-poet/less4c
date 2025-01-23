@@ -16,4 +16,10 @@
 /// 字符串结束符
 #define STR_EOF '\0'
 
+/// 文件名后缀分隔符
+#define FILE_EXT_SEPARATOR '.'
+
+/// Less文件扩展名
+#define LESS_EXTENSIONS "less"
+
 #endif

@@ -38,6 +38,12 @@ BOOL stringAppendChars(String *target, const char *source);
 
 /// 拼接字符串
 /// @param target 目标字符串
+/// @param c 字符
+/// @return 是否成功
+BOOL stringAppendChar(String *target, char c);
+
+/// 拼接字符串
+/// @param target 目标字符串
 /// @param source 源字符串
 /// @param start 开始位置
 /// @param end 结束位置

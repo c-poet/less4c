@@ -1,15 +1,16 @@
 #include "inc/ast/node/number_literal.h"
+#include "inc/core/func.h"
 #include <malloc.h>
 #include <stdio.h>
 
-NumberLiteral *numberLiteralNew(const char *val, double number, const char *unit) {
+NumberLiteral *numberLiteralNew(char *val, double number, const char *unit) {
     NumberLiteral *numberLiteral = malloc(sizeof(NumberLiteral));
     if (!numberLiteral) {
         return NULL;
     }
     nodeInit((POINTER) numberLiteral);
     numberLiteral->type = NT_NumberLiteral;
-    numberLiteral->value = val;
+    numberLiteral->value = charsClone(val);
     numberLiteral->number = number;
     numberLiteral->unit = unit;
     numberLiteral->print = (POINTER) numberLiteralPrint;
@@ -24,6 +25,7 @@ void numberLiteralPrint(NumberLiteral *numberLiteral, int level) {
 
 void numberLiteralDel(NumberLiteral *numberLiteral) {
     if (numberLiteral) {
+        free(numberLiteral->value);
         free(numberLiteral);
     }
 }

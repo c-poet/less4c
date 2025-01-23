@@ -4,9 +4,11 @@
 int main() {
     String *less = fileReadAll("D:\\OpenSource\\less4c\\test\\demo01.less");
     if (less != NULL) {
-        ScanResult *result = scanToken(less->chars);
+        ScanConfig *scanConfig = scanConfigNew();
+        ScanResult *result = scanToken(scanConfig, less->chars);
         scanResultPrint(result);
         scanResultDel(result);
+        scanConfigDel(scanConfig);
         stringDel(less);
     }
     return 0;

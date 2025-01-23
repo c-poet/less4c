@@ -57,3 +57,13 @@ BOOL charsEqChar(const char *str, char c) {
 BOOL charsEq(const char *str1, const char *str2) {
     return strcmp(str1, str2) == 0;
 }
+
+char *charsClone(const char *str) {
+    int len = (int) strlen(str);
+    char *newStr = malloc(sizeof(char) * (len + 1));
+    for (int i = 0; i < len; ++i) {
+        newStr[i] = str[i];
+    }
+    newStr[len] = STR_EOF;
+    return newStr;
+}

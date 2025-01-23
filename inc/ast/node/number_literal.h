@@ -8,7 +8,7 @@ typedef struct {
     BASE_NODE
 
     /// 数字值
-    const char *value;
+    char *value;
     /// 数值
     double number;
     /// 单位
@@ -20,10 +20,15 @@ typedef struct {
 /// @param number 数值
 /// @param unit 单位
 /// @return 数字字面量
-NumberLiteral *numberLiteralNew(const char *val, double number, const char *unit);
+NumberLiteral *numberLiteralNew(char *val, double number, const char *unit);
 
+/// 数字字面量打印
+/// @param numberLiteral 数字字面量
+/// @param level 层级
 void numberLiteralPrint(NumberLiteral *numberLiteral, int level);
 
+/// 释放数字字面量
+/// @param numberLiteral 数字字面量
 void numberLiteralDel(NumberLiteral *numberLiteral);
 
 #endif

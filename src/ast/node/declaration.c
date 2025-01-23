@@ -1,4 +1,5 @@
 #include "inc/ast/node/declaration.h"
+#include "inc/core/func.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -9,7 +10,7 @@ Declaration *declarationNew(char *property, Node *value) {
     }
     nodeInit((POINTER) declaration);
     declaration->type = NT_Declaration;
-    declaration->property = property;
+    declaration->property = charsClone(property);
     declaration->important = BOOL_FALSE;
     declaration->value = value;
     declaration->print = (POINTER) declarationPrint;
@@ -27,6 +28,7 @@ void declarationPrint(Declaration *declaration, int level) {
 void declarationDel(Declaration *declaration) {
     if (declaration) {
         nodeDel(declaration->value);
+        free(declaration->property);
         free(declaration);
     }
 }

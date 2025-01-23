@@ -34,4 +34,9 @@ BOOL charsEqChar(const char *str, char c);
 /// @return 是否相等
 BOOL charsEq(const char *str1, const char *str2);
 
+/// 字符串克隆
+/// @param str 字符串
+/// @return 克隆结果
+char *charsClone(const char *str);
+
 #endif

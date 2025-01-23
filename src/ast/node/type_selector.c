@@ -1,4 +1,5 @@
 #include "inc/ast/node/type_selector.h"
+#include "inc/core/func.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -9,7 +10,7 @@ TypeSelector *typeSelectorNew(char *name) {
     }
     nodeInit((POINTER) typeSelector);
     typeSelector->type = NT_TypeSelector;
-    typeSelector->name = name;
+    typeSelector->name = charsClone(name);
     typeSelector->print = (POINTER) typeSelectorPrint;
     typeSelector->destroy = (POINTER) typeSelectorDel;
     return typeSelector;
@@ -22,6 +23,7 @@ void typeSelectorPrint(TypeSelector *typeSelector, int level) {
 
 void typeSelectorDel(TypeSelector *typeSelector) {
     if (typeSelector) {
+        free(typeSelector->name);
         free(typeSelector);
     }
 }

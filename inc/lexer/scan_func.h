@@ -25,7 +25,7 @@ void scanColon(ScanContext *context);
 
 /// 扫描逻辑运算符
 /// @param context 上下文
-void scanLogin(ScanContext  *context);
+void scanLogic(ScanContext  *context);
 
 /// 扫描运算符
 /// @param context 上下文

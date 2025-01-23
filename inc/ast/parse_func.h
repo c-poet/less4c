@@ -19,13 +19,17 @@ void parseLiteral(ParseContext *context);
 /// @param context 上下文
 void parseBrace(ParseContext *context);
 
-/// 解析冒号
-/// @param context 上下文
-void parseColon(ParseContext *context);
-
 /// 解析表达式
 /// @param context 上下文
 void parseExpression(ParseContext *context);
+
+/// 解析关键字
+/// @param context 上下文
+void parseKeyword(ParseContext *context);
+
+/// 解析导入
+/// @param context 上下文
+void parseImport(ParseContext *context);
 
 /// 结束解析
 /// @param context 上下文

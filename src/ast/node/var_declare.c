@@ -1,4 +1,5 @@
 #include "inc/ast/node/var_declare.h"
+#include "inc/core/func.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -9,7 +10,7 @@ VarDeclare *varDeclareNew(char *name, Node *value) {
     }
     nodeInit((POINTER) varDeclare);
     varDeclare->type = NT_VarDeclare;
-    varDeclare->name = name;
+    varDeclare->name = charsClone(name);
     varDeclare->print = (POINTER) varDeclarePrint;
     varDeclare->destroy = (POINTER) varDeclareDel;
     varDeclare->value = value;
@@ -26,6 +27,7 @@ void varDeclarePrint(VarDeclare *varDeclare, int level) {
 void varDeclareDel(VarDeclare *varDeclare) {
     if (varDeclare) {
         nodeDel(varDeclare->value);
+        free(varDeclare->name);
         free(varDeclare);
     }
 }

@@ -1,15 +1,16 @@
 #include "inc/ast/node/call_variable.h"
+#include "inc/core/func.h"
 #include <malloc.h>
 #include <stdio.h>
 
-CallVariable *callVariableNew(const char *name, const Node *var) {
+CallVariable *callVariableNew(char *name, const Node *var) {
     CallVariable *callDeclare = malloc(sizeof(CallVariable));
     if (!callDeclare) {
         return NULL;
     }
     nodeInit((POINTER) callDeclare);
     callDeclare->type = NT_CallVariable;
-    callDeclare->name = name;
+    callDeclare->name = charsClone(name);
     callDeclare->var = var;
     callDeclare->print = (POINTER) callVariablePrint;
     callDeclare->destroy = (POINTER) callVariableDel;
@@ -22,5 +23,8 @@ void callVariablePrint(CallVariable *callVariable, int level) {
 }
 
 void callVariableDel(CallVariable *callVariable) {
-    free(callVariable);
+    if (callVariable) {
+        free(callVariable->name);
+        free(callVariable);
+    }
 }

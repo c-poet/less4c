@@ -5,39 +5,38 @@ void startScan(ScanContext *context) {
     while (scanContextSkipSpace(context) >= 0 && scanContextHasNext(context)) {
         switch (scanContextNext(context)) {
             case TOKEN_AT:
-                scanAt(context);
+                context->config->scanAt(context);
                 break;
             case TOKEN_LBRACE:
             case TOKEN_RBRACE:
-                scanBrace(context);
+                context->config->scanBrace(context);
                 break;
             case TOKEN_LBRACKET:
             case TOKEN_RBRACKET:
-                scanBracket(context);
+                context->config->scanBracket(context);
                 break;
             case TOKEN_COLON:
-                scanColon(context);
+                context->config->scanColon(context);
                 break;
             case TOKEN_GT:
             case TOKEN_LT:
             case TOKEN_EQ:
-                scanLogin(context);
+                context->config->scanLogic(context);
                 break;
             case TOKEN_PLUS:
             case TOKEN_MINUS:
             case TOKEN_RIDE:
-                scanOperator(context);
+                context->config->scanOperator(context);
                 break;
             case TOKEN_SLASH:
-                scanSlash(context);
+                context->config->scanSlash(context);
                 break;
             case TOKEN_SEMICOLON:
-                scanSemicolon(context);
+                context->config->scanSemicolon(context);
                 break;
             default:
-                scanLiteral(context);
+                context->config->scanLiteral(context);
         }
-
     }
 }
 
@@ -73,7 +72,7 @@ void scanColon(ScanContext *context) {
 }
 
 
-void scanLogin(ScanContext *context) {
+void scanLogic(ScanContext *context) {
     if ((scanContextPeekPre(context) == TOKEN_GT || scanContextPeekPre(context) == TOKEN_LT) &&
         scanContextHasNext(context) && scanContextPeekNext(context) == TOKEN_EQ) {
         scanContextNext(context);
@@ -113,7 +112,7 @@ void scanSlash(ScanContext *context) {
         }
         return;
     }
-    scanOperator(context);
+    context->config->scanOperator(context);
 }
 
 void scanSemicolon(ScanContext *context) {
@@ -127,7 +126,7 @@ void scanLiteral(ScanContext *context) {
     while (scanContextHasNext(context)) {
         c = scanContextPeekNext(context);
         if (!(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == TOKEN_UNDERLINE ||
-              c == TOKEN_AT || c == TOKEN_ROD || c == TOKEN_DOT)) {
+              c == TOKEN_AT || c == TOKEN_ROD || c == TOKEN_DOT || c == TOKEN_QUOTE)) {
             break;
         }
         scanContextNext(context);

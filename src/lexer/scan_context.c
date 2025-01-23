@@ -2,7 +2,7 @@
 #include "inc/core/str.h"
 #include <malloc.h>
 
-ScanContext *scanContextNew(const char *text, int start, int end) {
+ScanContext *scanContextNew(ScanConfig *config, const char *text, int start, int end) {
     ScanContext *context = malloc(sizeof(ScanContext));
     if (!context) {
         return NULL;
@@ -12,6 +12,7 @@ ScanContext *scanContextNew(const char *text, int start, int end) {
     context->loc.row = 1;
     context->loc.col = 0;
     context->end = end;
+    context->config = config;
     context->text = text;
     context->result = scanResultNew();
     if (!context->result) {

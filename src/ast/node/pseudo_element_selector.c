@@ -1,4 +1,5 @@
 #include "inc/ast/node/pseudo_element_selector.h"
+#include "inc/core/func.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -11,7 +12,7 @@ PseudoElementSelector *pseudoElementSelectorNew(char *name) {
     pseudoElementSelector->type = NT_PseudoElementSelector;
     pseudoElementSelector->print = (POINTER) pseudoElementSelectorPrint;
     pseudoElementSelector->destroy = (POINTER) pseudoElementSelectorDel;
-    pseudoElementSelector->name = name;
+    pseudoElementSelector->name = charsClone(name);
     return pseudoElementSelector;
 }
 
@@ -22,6 +23,7 @@ void pseudoElementSelectorPrint(PseudoElementSelector *pseudoElementSelector, in
 
 void pseudoElementSelectorDel(PseudoElementSelector *pseudoElementSelector) {
     if (pseudoElementSelector) {
+        free(pseudoElementSelector->name);
         free(pseudoElementSelector);
     }
 }

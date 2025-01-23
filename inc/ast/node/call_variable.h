@@ -8,7 +8,7 @@ typedef struct {
     BASE_NODE
 
     /// 变量名
-    const char *name;
+    char *name;
     /// 变量所在节点
     const Node *var;
 } CallVariable;
@@ -16,10 +16,15 @@ typedef struct {
 /// 创建访问变量节点
 /// @param name 变量名
 /// @param var 变量信息
-CallVariable *callVariableNew(const char *name, const Node *var);
+CallVariable *callVariableNew(char *name, const Node *var);
 
+/// 打印调用变量信息
+/// @param callVariable 调用变量节点
+/// @param level 层级
 void callVariablePrint(CallVariable *callVariable, int level);
 
+/// 释放调用变量节点
+/// @param callVariable 调用变量节点
 void callVariableDel(CallVariable *callVariable);
 
 

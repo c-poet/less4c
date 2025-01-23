@@ -36,8 +36,7 @@ BOOL stringAppendChars(String *target, const char *source) {
     return stringAppendCharsRange(target, source, 0, (int) strlen(source));
 }
 
-BOOL stringAppendCharsRange(String *target, const char *source, int start, int end) {
-    int len = end - start;
+BOOL stringEnlargeSize(String *target, int len) {
     if (target->len + len >= target->actualLen) {
         if (target->chars == NULL) {
             target->actualLen = len + CHARS_R_LEN;
@@ -53,6 +52,24 @@ BOOL stringAppendCharsRange(String *target, const char *source, int start, int e
             }
             target->chars = chars;
         }
+    }
+    return BOOL_TRUE;
+}
+
+BOOL stringAppendChar(String *target, char c) {
+    if (!stringEnlargeSize(target, 1)) {
+        return BOOL_FALSE;
+    }
+    target->chars[target->len] = c;
+    ++target->len;
+    target->chars[target->len] = STR_EOF;
+    return BOOL_TRUE;
+}
+
+BOOL stringAppendCharsRange(String *target, const char *source, int start, int end) {
+    int len = end - start;
+    if (!stringEnlargeSize(target, len)) {
+        return BOOL_FALSE;
     }
     int i = 0;
     while (i < len) {

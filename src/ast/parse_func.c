@@ -21,6 +21,7 @@
 #include "inc/ast/node/class_selector.h"
 #include "inc/ast/node/pseudo_class_selector.h"
 #include "inc/ast/node/pseudo_element_selector.h"
+#include "inc/ast/node/import.h"
 #include <string.h>
 
 void invokeParse(ParseContext *context) {
@@ -28,18 +29,21 @@ void invokeParse(ParseContext *context) {
         Token *token = parseContextNext(context);
         switch (token->type) {
             case TT_Identifier:
-                parseIdentifier(context);
+                context->config->parseIdentifier(context);
                 break;
             case TT_Literal:
             case TT_Operator:
             case TT_Colon:
-                parseLiteral(context);
+                context->config->parseLiteral(context);
                 break;
             case TT_Brace:
                 if (context->root->type == NT_Block && charsEqChar(token->value, TOKEN_RBRACE)) {
                     return;
                 }
-                parseBrace(context);
+                context->config->parseBrace(context);
+                break;
+            case TT_Keyword:
+                context->config->parseKeyword(context);
                 break;
             default:
                 parseContextTermExpected(context);
@@ -69,7 +73,7 @@ void parseIdentifier(ParseContext *context) {
         Value *value = valueNew();
         VarDeclare *varDeclare = varDeclareNew(identifier->value, (POINTER) value);
         parseContextRootAddChild(context, (POINTER) varDeclare);
-        parseContextRunAsRoot(context, (POINTER) value, parseExpression);
+        parseContextRunAsRoot(context, (POINTER) value, (POINTER) context->config->parseExpression);
         if (listEmpty(value->children)) {
             parseContextTermExpected(context);
         }
@@ -110,7 +114,7 @@ void parseLiteral(ParseContext *context) {
         Value *value = valueNew();
         Declaration *declaration = declarationNew(token->value, (POINTER) value);
         parseContextRootAddChild(context, (POINTER) declaration);
-        parseContextRunAsRoot(context, (POINTER) value, parseExpression);
+        parseContextRunAsRoot(context, (POINTER) value, (POINTER) context->config->parseExpression);
     } else {
         StringLiteral *stringLiteral = stringLiteralNew(token->value);
         parseContextRootAddChild(context, (POINTER) stringLiteral);
@@ -257,10 +261,10 @@ void parseExpression(ParseContext *context) {
     while (parseContextHasNext(context) && (token = parseContextNext(context))->type != TT_Semicolon) {
         switch (token->type) {
             case TT_Literal:
-                parseLiteral(context);
+                context->config->parseLiteral(context);
                 break;
             case TT_Identifier:
-                parseIdentifier(context);
+                context->config->parseIdentifier(context);
                 break;
             case TT_Logic:
             case TT_Operator:
@@ -277,6 +281,38 @@ void parseExpression(ParseContext *context) {
     parseExpressionEnd(context, opStack, nodeStack);
     stackDel(opStack);
     stackDel(nodeStack);
+}
+
+void parseKeyword(ParseContext *context) {
+    if (charsEq(parseContextPeekPre(context)->value, TOKEN_IMPORT)) {
+        context->config->parseImport(context);
+        return;
+    }
+    parseContextTermExpected(context);
+}
+
+void parseImport(ParseContext *context) {
+    if (!parseContextHasNext(context) || parseContextPeekNext(context)->type != TT_Literal) {
+        parseContextTermExpected(context);
+        return;
+    }
+    Token *token = parseContextNext(context);
+    if (!parseContextHasNext(context) || parseContextPeekNext(context)->type != TT_Semicolon) {
+        parseContextTermExpected(context);
+        return;
+    }
+    parseContextNext(context);
+    char *fileName = removeQuote(token->value);
+    if (fileName == NULL) {
+        parseContextTermExpected(context);
+        return;
+    }
+    Node *node = invokeParseGetRootNode(context, fileName);
+    if (node == NULL) {
+        return;
+    }
+    Import *import = importNew(fileName, node);
+    parseContextRootAddChild(context, (POINTER) import);
 }
 
 void endParse(ParseContext *context) {
