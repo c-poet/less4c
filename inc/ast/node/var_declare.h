@@ -9,20 +9,23 @@ typedef struct {
     BASE_NODE
 
     /// 变量名
-    const char *name;
-    /// 变量值列表
-    List *children;
+    char *name;
+    /// 变量值
+    Node *value;
 } VarDeclare;
 
 /// 实例变量申明节点
 /// @param name 变量名
 /// @return 变量申明
-VarDeclare *varDeclareNew(const char *name);
+VarDeclare *varDeclareNew(char *name, Node *value);
 
-BOOL varDeclareAddChild(VarDeclare *varDeclare, Node *child);
-
+/// 打印变量声明
+/// @param varDeclare 变量声明
+/// @param level 层级
 void varDeclarePrint(VarDeclare *varDeclare, int level);
 
+/// 释放变量声明
+/// @param varDeclare 变量声明
 void varDeclareDel(VarDeclare *varDeclare);
 
 #endif

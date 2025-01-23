@@ -25,8 +25,6 @@ endmacro()
 
 load_files(LIB_SOURCES)
 
-message(${LIB_SOURCES})
-
 add_library(less4c SHARED ${LIB_SOURCES})
 
 include_directories(.)

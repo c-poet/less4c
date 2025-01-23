@@ -7,6 +7,7 @@ void nodeInit(Node *node) {
     node->addChild = NULL;
     node->print = NULL;
     node->destroy = NULL;
+    node->getChildren = NULL;
 }
 
 BOOL nodeAddChild(Node *parent, Node *child) {
@@ -56,6 +57,13 @@ void nodeListPrintByLevel(List *nodes, int level) {
     }
 }
 
+List *nodeGetChildren(Node *node) {
+    if (node && node->getChildren != NULL) {
+        return node->getChildren(node);
+    }
+    return NULL;
+}
+
 void nodeDel(Node *node) {
     if (node && node->destroy != NULL) {
         node->destroy(node);
@@ -98,6 +106,10 @@ char *nodeTypeAsString(NodeType type) {
             return "PseudoClassSelector";
         case NT_PseudoElementSelector:
             return "PseudoElementSelector";
+        case NT_Declaration:
+            return "Declaration";
+        case NT_Value:
+            return "Value";
         default:
             return "";
     }

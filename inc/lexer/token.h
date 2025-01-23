@@ -22,7 +22,7 @@ typedef enum {
     TT_Bracket,
     /// ";"
     TT_Semicolon,
-    // ";"
+    // ":"
     TT_Colon,
     /// 结束符号
     TT_EOF,

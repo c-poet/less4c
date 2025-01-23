@@ -36,6 +36,10 @@ typedef enum {
     NT_PseudoClassSelector,
     /// 伪元素选择
     NT_PseudoElementSelector,
+    /// 属性声明
+    NT_Declaration,
+    /// 属性值
+    NT_Value,
 } NodeType;
 
 /// 节点基本结构定义
@@ -45,7 +49,8 @@ typedef enum {
     struct S_Node *parent; \
     BOOL (*addChild)(struct S_Node*, struct S_Node*); \
     void (*print)(struct S_Node*, int);               \
-    void (*destroy)(struct S_Node*);
+    void (*destroy)(struct S_Node*);                  \
+    List *(*getChildren)(struct S_Node*);
 
 /// 普通节点
 typedef struct S_Node {
@@ -76,14 +81,27 @@ void nodePrint(Node *node);
 /// @param level 层次
 void nodePrintTypeByLevel(Node *node, int level);
 
+/// 打印节点
+/// @param node 节点
+/// @param level 层级
 void nodePrintByLevel(Node *node, int level);
 
+/// 打印节点
+/// @param nodes 节点列表
+/// @param level 层级
 void nodeListPrintByLevel(List *nodes, int level);
+
+/// 获取子级列表
+/// @param node 节点
+/// @return 子级列表
+List *nodeGetChildren(Node *node);
 
 /// 释放节点
 /// @param node 节点
 void nodeDel(Node *node);
 
+/// 释放节点
+/// @param nodes 节点列表
 void nodeListDel(List *nodes);
 
 /// 节点类型转字符串

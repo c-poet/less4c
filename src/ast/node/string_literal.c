@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <malloc.h>
 
-StringLiteral *stringLiteralNew(const char *val) {
+StringLiteral *stringLiteralNew(char *val) {
     StringLiteral *stringLiteral = malloc(sizeof(StringLiteral));
     if (!stringLiteral) {
         return NULL;

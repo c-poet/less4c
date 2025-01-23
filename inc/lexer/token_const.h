@@ -22,8 +22,10 @@
 #define TOKEN_MINUS TOKEN_ROD
 #define TOKEN_RIDE TOKEN_ASTERISK
 #define TOKEN_DIVISION TOKEN_SLASH
+#define TOKEN_REA '%'
 #define TOKEN_GT '>'
 #define TOKEN_LT '<'
+#define TOKEN_WELL '#'
 
 #define TOKEN_LF '\n'
 #define TOKEN_TAB '\t'

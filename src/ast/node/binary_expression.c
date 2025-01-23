@@ -14,6 +14,8 @@ BinaryExpression *binaryExpressionNew(char *op, Node *left, Node *right) {
     binaryExpression->right = right;
     binaryExpression->print = (POINTER) binaryExpressionPrint;
     binaryExpression->destroy = (POINTER) binaryExpressionDel;
+    left->parent = (POINTER) binaryExpression;
+    right->parent = (POINTER) binaryExpression;
     return binaryExpression;
 }
 

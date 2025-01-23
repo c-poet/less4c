@@ -23,9 +23,9 @@ void startScan(ScanContext *context) {
             case TOKEN_EQ:
                 scanLogin(context);
                 break;
-            case '+':
-            case '-':
-            case '*':
+            case TOKEN_PLUS:
+            case TOKEN_MINUS:
+            case TOKEN_RIDE:
                 scanOperator(context);
                 break;
             case TOKEN_SLASH:

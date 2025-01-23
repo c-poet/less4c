@@ -12,6 +12,7 @@ StyleSheet *styleSheetNew() {
     styleSheet->addChild = (POINTER) styleSheetAddChild;
     styleSheet->print = (POINTER) styleSheetPrint;
     styleSheet->destroy = (POINTER) styleSheetDel;
+    styleSheet->getChildren = (POINTER) styleSheetGetChildren;
     styleSheet->children = listNew(sizeof(Node *));
     if (styleSheet->children == NULL) {
         styleSheetDel(styleSheet);
@@ -24,6 +25,10 @@ void styleSheetAddChild(StyleSheet *styleSheet, Node *child) {
     listAdd(styleSheet->children, child);
 }
 
+List *styleSheetGetChildren(StyleSheet *styleSheet) {
+    return styleSheet->children;
+}
+
 void styleSheetPrint(StyleSheet *styleSheet, int level) {
     nodePrintTypeByLevel((POINTER) styleSheet, level);
     printf("[AST]");
@@ -33,7 +38,7 @@ void styleSheetPrint(StyleSheet *styleSheet, int level) {
 void styleSheetDel(StyleSheet *styleSheet) {
     if (styleSheet) {
         nodeListDel(styleSheet->children);
-        free(styleSheet->children);
+        listDel(styleSheet->children);
         free(styleSheet);
     }
 }

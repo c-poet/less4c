@@ -6,6 +6,17 @@
 /// 规则
 typedef struct {
     BASE_NODE
+
+    /// 选择器列表
+    Node *prelude;
+    /// 规则块
+    Node *block;
 } Rule;
+
+Rule *ruleNew(Node *prelude, Node *block);
+
+void rulePrint(Rule *rule, int level);
+
+void ruleDel(Rule *rule);
 
 #endif

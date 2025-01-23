@@ -1,11 +1,14 @@
 // 1. 定义变量(全局变量)
 @bgColor: white;
 @Height: 50.02rpx;
+@H-Width: 90rpx - 40px;
 @H-Height: (@Height - 10)  + 60 * 50 + (10rpx + 80px + 30) * 60;
-@H-Width: 90rpx + @H-Height - 40px;
+@a: @H-Height >= 10 + 6;
 
-* {
-  color: aliceblue;
+*, #b, .p, b {
+  #o2 {
+    color: black;
+  }
 }
 
 .contain {
@@ -13,9 +16,9 @@
 }
 
 /** 测试 */
-.row {
+.row, #pppp {
   height: @Height;
-  margin-left: @Height;
+  margin-left: @Height / 5;
 }
 
 #id:hover {

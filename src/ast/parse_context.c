@@ -17,20 +17,11 @@ ParseContext *parseContextNew(Token **tokens) {
     context->root = ast->root;
     context->tokens = tokens;
     context->message = NULL;
-    context->tokenStack = stackNew(sizeof(Token *));
-    if (context->tokenStack == NULL) {
-        parseContextDel(context);
-        return NULL;
-    }
-    context->nodeStack = stackNew(sizeof(Node *));
-    if (context->nodeStack == NULL) {
-        parseContextDel(context);
-    }
     return context;
 }
 
 BOOL parseContextHasNext(ParseContext *context) {
-    return context->tokens[context->cur]->type != TT_EOF && context->message == NULL;
+    return context->tokens[context->cur]->type != TT_EOF && !parseContextHasError(context);
 }
 
 Token *parseContextPeekPre(ParseContext *context) {
@@ -46,18 +37,24 @@ Token *parseContextPeekNext(ParseContext *context) {
 }
 
 void parseContextMessage(ParseContext *context, char *message) {
-    String *str = stringNew();
-    if (str) {
-        Token *token = parseContextPeekNext(context);
-        stringAppendChars(str, message);
-        stringAppendChars(str, " row: ");
-        stringAppendInt(str, token->loc.row);
-        stringAppendChars(str, " col: ");
-        stringAppendInt(str, token->loc.col);
-        context->message = str->chars;
-        str->chars = NULL;
-        free(str);
+    if (context->message == NULL) {
+        String *str = stringNew();
+        if (str) {
+            Token *token = parseContextPeekNext(context);
+            stringAppendChars(str, message);
+            stringAppendChars(str, " row: ");
+            stringAppendInt(str, token->loc.row);
+            stringAppendChars(str, " col: ");
+            stringAppendInt(str, token->loc.col);
+            context->message = str->chars;
+            str->chars = NULL;
+            free(str);
+        }
     }
+}
+
+BOOL parseContextHasError(ParseContext *context) {
+    return context->message != NULL;
 }
 
 void parseContextTermExpected(ParseContext *context) {
@@ -71,12 +68,16 @@ void parseContextRunAsRoot(ParseContext *context, Node *root, void invoke(ParseC
     context->root = old;
 }
 
+void parseContextRootAddChild(ParseContext *context, Node *child) {
+    if (!nodeAddChild(context->root, child)) {
+        parseContextTermExpected(context);
+    }
+}
+
 void parseContextDel(ParseContext *context) {
     if (context) {
         free(context->message);
         astDel(context->ast);
-        stackDel(context->tokenStack);
-        stackDel(context->nodeStack);
         free(context);
     }
 }

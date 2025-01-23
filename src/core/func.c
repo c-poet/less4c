@@ -49,3 +49,11 @@ BOOL charsToDoubleByRange(const char *chars, int start, int end, double *result)
     *result = num;
     return BOOL_TRUE;
 }
+
+BOOL charsEqChar(const char *str, char c) {
+    return strlen(str) == 1 && str[0] == c;
+}
+
+BOOL charsEq(const char *str1, const char *str2) {
+    return strcmp(str1, str2) == 0;
+}
