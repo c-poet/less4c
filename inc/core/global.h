@@ -5,6 +5,8 @@
 #define POINTER void*
 /// 空值
 #define NULL (POINTER)0
+/// 无符号int
+#define UINT unsigned int
 
 /// Bool类型
 #define BOOL int
