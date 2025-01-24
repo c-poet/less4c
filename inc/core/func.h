@@ -39,4 +39,9 @@ BOOL charsEq(const char *str1, const char *str2);
 /// @return 克隆结果
 char *charsClone(const char *str);
 
+/// 求字符串hash值
+/// @param str 字符串
+/// @return Hash值
+UINT charsHashCode(const char *str);
+
 #endif

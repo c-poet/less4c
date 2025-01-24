@@ -67,3 +67,12 @@ char *charsClone(const char *str) {
     newStr[len] = STR_EOF;
     return newStr;
 }
+
+UINT charsHashCode(const char *str) {
+    char c;
+    UINT hash = 5381;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash;
+}
