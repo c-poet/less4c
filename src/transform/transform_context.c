@@ -10,7 +10,7 @@ TransformContext *transformContextNew(TransformConfig *config, Ast *targetAst, A
     context->parent = NULL;
     context->targetAst = targetAst;
     context->sourceAst = sourceAst;
-    context->targetNode = NULL;
+    context->targetNode = targetAst->root;
     context->sourceNode = sourceAst->root;
     context->config = config;
     context->varTable = mapNew((POINTER) charsEq, (POINTER) charsHashCode);
