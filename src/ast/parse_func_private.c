@@ -1,5 +1,6 @@
 #include "inc/ast/parse_func_private.h"
 #include "inc/ast/node/var_declare.h"
+#include "inc/ast/node/import.h"
 #include "inc/lexer/token_const.h"
 #include "inc/core/func.h"
 #include "inc/core/file.h"
@@ -7,15 +8,30 @@
 #include "inc/lexer/scanner.h"
 #include <string.h>
 
+Node *findVariableImport(Import *import, const char *name) {
+    List *children = nodeGetChildren(import->root);
+    for (int i = 0; i < children->size; ++i) {
+        if (((Node *) children->values[i])->type == NT_VarDeclare
+            && charsEq(((VarDeclare *) children->values[i])->name, name)) {
+            return children->values[i];
+        }
+    }
+    return NULL;
+}
+
 Node *findVariable(ParseContext *context, const char *name) {
     List *children;
-    Node *node = context->root;
+    Node *node = context->root, *target = NULL;
     while (node != NULL) {
         if ((children = nodeGetChildren(node)) != NULL) {
             for (int i = 0; i < children->size; ++i) {
                 if (((Node *) children->values[i])->type == NT_VarDeclare
                     && charsEq(((VarDeclare *) children->values[i])->name, name)) {
                     return children->values[i];
+                }
+                if (((Node *) children->values[i])->type == NT_IMPORT &&
+                    (target = findVariableImport((Import *) children->values[i], name)) != NULL) {
+                    return target;
                 }
             }
         }
